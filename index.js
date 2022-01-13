@@ -1,26 +1,43 @@
-// lets me fetch the html from the website
-import fetch from 'node-fetch';
+// create a writable stream, to write data to a file
+import { createWriteStream } from 'node:fs';
+// to direct the images into the correct folder
+import Path from 'node:path';
+// to get the html and the image data
+import axios from 'axios';
 
-// this requests the data from the website and stores it in the htmlString variable
-const response = await fetch(
+// request the html data from the website and store it as a string
+const res = await axios.get(
   'https://memegen-link-examples-upleveled.netlify.app/',
 );
-const htmlString = await response.text();
+const htmlString = res.data;
 
-// convert the string html into arrays that start off with the image source links
+// convert the string html into an array. elements start off with the image source links
 const htmlArray = htmlString.split('src="');
 
 // loop over the array, to find the first index of each end quote (")
-// cut off the string at this point
-// store the shorter strings (the found sources) in a new array (srcArr)
+// cut off the string at this point and store the shorter strings in a new array
 
-let srcArr = [];
+const srcArr = [];
 
 for (let item of htmlArray) {
-  let index = item.indexOf('"');
+  const index = item.indexOf('"');
   srcArr.push(item.slice(0, index));
 }
 
-console.log(srcArr);
+// remove the first 2 elements of the array, these are not an img src
+srcArr.shift();
+srcArr.shift();
 
-// the first element of the array should be ignored! index 1 to 10 are the images i want
+// write a loop. each src url is 1) downloaded 2) named 3) stored in memes folder
+for (let i = 0; i < 10; i++) {
+  const download = await axios({
+    // 1)
+    url: srcArr[i],
+    method: 'GET',
+    responseType: 'stream',
+  });
+
+  const imgName = i < 9 ? `0${i + 1}.jpg` : `${i + 1}.jpg`; // 2)
+  const filePath = Path.resolve('./memes', imgName);
+  download.data.pipe(createWriteStream(filePath)); // 3)
+}
