@@ -40,4 +40,6 @@ for (let i = 0; i < 10; i++) {
   const imgName = i < 9 ? `0${i + 1}.jpg` : `${i + 1}.jpg`; // 2)
   const filePath = Path.resolve('./memes', imgName);
   download.data.pipe(createWriteStream(filePath)); // 3)
+
+  console.log(i + 1 + ' of 10');
 }
