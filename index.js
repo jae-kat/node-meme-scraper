@@ -19,7 +19,7 @@ const htmlArray = htmlString.split('src="');
 
 const srcArr = [];
 
-for (let item of htmlArray) {
+for (const item of htmlArray) {
   const index = item.indexOf('"');
   srcArr.push(item.slice(0, index));
 }
