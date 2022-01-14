@@ -16,7 +16,6 @@ const htmlArray = htmlString.split('src="');
 
 // loop over the array, to find the first index of each end quote (")
 // cut off the string at this point and store the shorter strings in a new array
-
 const srcArr = [];
 
 for (const item of htmlArray) {
@@ -30,8 +29,8 @@ srcArr.shift();
 
 // write a loop. each src url is 1) downloaded 2) named 3) stored in memes folder
 for (let i = 0; i < 10; i++) {
+  // 1)
   const download = await axios({
-    // 1)
     url: srcArr[i],
     method: 'GET',
     responseType: 'stream',
@@ -39,7 +38,9 @@ for (let i = 0; i < 10; i++) {
 
   const imgName = i < 9 ? `0${i + 1}.jpg` : `${i + 1}.jpg`; // 2)
   const filePath = Path.resolve('./memes', imgName);
+
   download.data.pipe(createWriteStream(filePath)); // 3)
 
+  // log the download progress
   console.log(i + 1 + ' of 10');
 }
