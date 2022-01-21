@@ -1,10 +1,9 @@
 // create a writable stream, to write data to a file
 import { createWriteStream, mkdir } from 'node:fs';
 // to direct the images into the correct folder
-import Path from 'node:path';
+import path from 'node:path/posix';
 // to get the html and the image data
 import axios from 'axios';
-import path from 'path/posix';
 
 // request the html data from the website and store it as a string
 const res = await axios.get(
@@ -18,7 +17,6 @@ const htmlArray = htmlString.split('src="');
 // loop over the array, to find the first index of each end quote (")
 // cut off the string at this point and store the shorter strings in a new array
 const srcArr = [];
-
 for (const item of htmlArray) {
   const index = item.indexOf('"');
   srcArr.push(item.slice(0, index));
@@ -49,8 +47,7 @@ for (let i = 0; i < 10; i++) {
 
   const imgName = i < 9 ? `0${i + 1}.jpg` : `${i + 1}.jpg`; // 2)
 
-  const filePath = Path.resolve('./memes', imgName);
-
+  const filePath = path.resolve('./memes', imgName);
   download.data.pipe(createWriteStream(filePath)); // 3)
 
   // log the download progress
