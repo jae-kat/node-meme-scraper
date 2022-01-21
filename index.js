@@ -1,9 +1,10 @@
 // create a writable stream, to write data to a file
-import { createWriteStream } from 'node:fs';
+import { createWriteStream, mkdir } from 'node:fs';
 // to direct the images into the correct folder
 import Path from 'node:path';
 // to get the html and the image data
 import axios from 'axios';
+import path from 'path/posix';
 
 // request the html data from the website and store it as a string
 const res = await axios.get(
@@ -27,6 +28,16 @@ for (const item of htmlArray) {
 srcArr.shift();
 srcArr.shift();
 
+// create a folder for the memes
+const folder = () => {
+  mkdir(path.join('memes'), { recursive: true }, (err) => {
+    if (err) {
+      return console.error(err);
+    }
+  });
+};
+folder();
+
 // write a loop. each src url is 1) downloaded 2) named 3) stored in memes folder
 for (let i = 0; i < 10; i++) {
   // 1)
@@ -37,6 +48,7 @@ for (let i = 0; i < 10; i++) {
   });
 
   const imgName = i < 9 ? `0${i + 1}.jpg` : `${i + 1}.jpg`; // 2)
+
   const filePath = Path.resolve('./memes', imgName);
 
   download.data.pipe(createWriteStream(filePath)); // 3)
